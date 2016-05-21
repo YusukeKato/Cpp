@@ -6,44 +6,71 @@
  
 /*
  * OpenGL‚ğ—p‚¢‚½‚»‚ê
+ * ‚â‚è•ûŠÔˆá‚Á‚Ä‚¢‚é‰Â”\«‚ª‚‚¢
+ * display‚Ì’†‚Å‚â‚é‚Ì‚©
+ * simu‚Æ‚©ì‚Á‚Ä‚»‚Á‚¿‚Å“®‚©‚·‚Ì‚©
+ * ‚æ‚­‚í‚©‚ç‚È‚¢
  */
  
 #include <GL/glut>
 #include <iostream>
+#include <windows>
 using namespace std;
 
-static GLint flag = 0;
+static GLint px = 0,py = 0;
+static GLint nx = 40, ny = 40;
 
 #define PI 3.14159265
 
 void Point(int x,int y,float size){
- glPointSize(size);
- glBegin(GL_POINTS);
- glVertex2i(x,y);
- glEnd();
+	glPointSize(size);
+	glBegin(GL_POINTS);
+	glVertex2i(x,y);
+	glEnd();
+}
+
+void simu(void)
+{
+	if(ny > py) ny -= 8;
+	else if(ny < py) ny += 8;
+	if(nx > px) nx -= 8;
+	else if(nx < px) nx += 8;
+	if(ny == py && nx == px){
+		cout << "\n\n ......END...... \n\n";
+		exit(0);
+	}
+	Sleep(1000);
 }
 
 void display(void)
 {
-	int i, j, k;
+	int i, j;
 	
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	for(j = -40; j <= 40; j += 8){
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		glBegin(GL_LINES);
+		glVertex2d(j,40);
+		glVertex2d(j,-40);
+		glVertex2d(40,j);
+		glVertex2d(-40,j);
+		glEnd();
 		for(i = -40; i <= 40; i += 8){
 			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 			Point(j, i, 20);
-			glBegin(GL_LINES);
-			glVertex2d(j,40);
-			glVertex2d(j,-40);
-			
-			glVertex2d(40,j);
-			glVertex2d(-40,j);
-			glEnd();
 		}//for_i
 	}//for_j
+	glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
+	Point(px,py,15);//player
+	glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
+	Point(nx,ny,15);//enemy
 	
 	glFlush();
+	
+	simu();
+	
+	glutPostRedisplay();
 }//display
 
 void resize(int w, int h)
@@ -75,10 +102,18 @@ void mouse(int button, int state, int x, int y)
 void keyboard(unsigned char key ,int x, int y)
 {
 	if ( key == '\x1b') exit(0);
-	if ( key == 'w') flag = 1;
-	if ( key == 's') flag = 2;
-	if ( key == 'd') flag = 3;
-	if ( key == 'a') flag = 4;
+	if ( key == 'w'){
+		if(py < 40) py += 8;
+	}
+	if ( key == 's'){
+		if(py > -40) py -= 8;
+	}
+	if ( key == 'd'){
+		if(px < 40) px += 8;
+	}
+	if ( key == 'a'){
+		if(px > -40) px -= 8;
+	}
 }//keyboard
 
 void init(void)
