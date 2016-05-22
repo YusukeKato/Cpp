@@ -2,26 +2,34 @@
  * Cpp_game_001.cpp
  * Yusuke_Kato
  * 2016.5.21
+ * 2016.5.22
  */
  
 /*
  * OpenGLを用いたそれ
- * やり方間違っている可能性が高い
- * displayの中でやるのか
- * simuとか作ってそっちで動かすのか
- * よくわからない
+ * ・やり方間違っている可能性が高い
+ *   displayの中でやるのか
+ *   simuとか作ってそっちで動かすのか
+ *   よくわからない
+ * 
+ * ・（解決した）flagを用いてターンを作った
+ *	 ターン制にするにはどうすればいいか
+ * 	 自分が動いて、相手が動いて、というような順番を作る方法を考える
  */
  
 #include <GL/glut>
 #include <iostream>
-#include <windows>
+#include <windows>//Sleepを使いたかった
 using namespace std;
 
-static GLint px = 0,py = 0;
-static GLint nx = 40, ny = 40;
+static GLint px = 0,py = 0;//player位置
+static GLint nx = 40, ny = 40;//enemy位置
 
-#define PI 3.14159265
+static GLint flag = 0;//flagターンを作るため
 
+#define PI 3.14159265//円周率
+
+/* 点を作る。要素は（x座標、y座標、大きさ） */
 void Point(int x,int y,float size){
 	glPointSize(size);
 	glBegin(GL_POINTS);
@@ -29,17 +37,21 @@ void Point(int x,int y,float size){
 	glEnd();
 }
 
-void simu(void)
+/* enemyの動き */
+void enemy_motion(void)
 {
-	if(ny > py) ny -= 8;
-	else if(ny < py) ny += 8;
-	if(nx > px) nx -= 8;
-	else if(nx < px) nx += 8;
-	if(ny == py && nx == px){
-		cout << "\n\n ......END...... \n\n";
-		exit(0);
-	}
-	Sleep(1000);
+	if(flag == 1){
+		if(ny > py) ny -= 8;
+		else if(ny < py) ny += 8;
+		if(nx > px) nx -= 8;
+		else if(nx < px) nx += 8;
+		if(ny == py && nx == px){
+			cout << "\n\n ......END...... \n\n";
+			exit(0);
+		}
+		Sleep(1000);//なくてもいい
+		flag = 0;//ターンの切り替えのため
+	}//if_flag
 }
 
 void display(void)
@@ -48,6 +60,7 @@ void display(void)
 	
 	glClear(GL_COLOR_BUFFER_BIT);
 	
+	/* field作成 : -40～40に間隔8ずつ */
 	for(j = -40; j <= 40; j += 8){
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		glBegin(GL_LINES);
@@ -61,18 +74,21 @@ void display(void)
 			Point(j, i, 20);
 		}//for_i
 	}//for_j
+	/* player描写 */
 	glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
 	Point(px,py,15);//player
+	/* enemy描写 */
 	glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
 	Point(nx,ny,15);//enemy
 	
 	glFlush();
 	
-	simu();
+	enemy_motion();
 	
 	glutPostRedisplay();
 }//display
 
+/* よくわからない */
 void resize(int w, int h)
 {
 	glViewport( 0, 0, w, h );
@@ -83,10 +99,9 @@ void resize(int w, int h)
  	glLoadIdentity();
 }//resize
 
+/* これから使うかも */
 void mouse(int button, int state, int x, int y)
 {
-	static int x0, y0;
-	
 	switch (button) {
 		case GLUT_LEFT_BUTTON:
 			break;
@@ -103,17 +118,29 @@ void keyboard(unsigned char key ,int x, int y)
 {
 	if ( key == '\x1b') exit(0);
 	if ( key == 'w'){
-		if(py < 40) py += 8;
-	}
+		if(py < 40){
+			py += 8;
+			flag = 1;
+		}//if_py
+	}//if_key
 	if ( key == 's'){
-		if(py > -40) py -= 8;
-	}
+		if(py > -40){
+			py -= 8;
+			flag = 1;
+		}//if_py
+	}//if_key
 	if ( key == 'd'){
-		if(px < 40) px += 8;
-	}
+		if(px < 40){
+			px += 8;
+			flag = 1;
+		}//if_px
+	}//if_key
 	if ( key == 'a'){
-		if(px > -40) px -= 8;
-	}
+		if(px > -40){
+			px -= 8;
+			flag = 1;
+		}//if_px
+	}//if_key
 }//keyboard
 
 void init(void)
