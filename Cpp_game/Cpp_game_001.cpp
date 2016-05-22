@@ -12,6 +12,11 @@
  *   simuとか作ってそっちで動かすのか
  *   よくわからない
  * 
+ * ・（一応解決した）flag_2を作って解決はした
+ *    あんまりきれいとは言えないので、
+ *    もっと良い方法を考える
+ *    playerが2回行動する
+ * 
  * ・（解決した）flagを用いてターンを作った
  *	 ターン制にするにはどうすればいいか
  * 	 自分が動いて、相手が動いて、というような順番を作る方法を考える
@@ -26,6 +31,7 @@ static GLint px = 0,py = 0;//player位置
 static GLint nx = 40, ny = 40;//enemy位置
 
 static GLint flag = 0;//flagターンを作るため
+static GLint flag_2 = 0;//playerが2回行動するため
 
 #define PI 3.14159265//円周率
 
@@ -40,7 +46,7 @@ void Point(int x,int y,float size){
 /* enemyの動き */
 void enemy_motion(void)
 {
-	if(flag == 1){
+	if(flag == 2){
 		if(ny > py) ny -= 8;
 		else if(ny < py) ny += 8;
 		if(nx > px) nx -= 8;
@@ -51,6 +57,7 @@ void enemy_motion(void)
 		}
 		Sleep(1000);//なくてもいい
 		flag = 0;//ターンの切り替えのため
+		flag_2 = 0;
 	}//if_flag
 }
 
@@ -62,20 +69,30 @@ void display(void)
 	
 	/* field作成 : -40～40に間隔8ずつ */
 	for(j = -40; j <= 40; j += 8){
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		glColor4f(0.0f, 0.0f, 0.0f, 0.0f);
 		glBegin(GL_LINES);
-		glVertex2d(j,40);
+		glVertex2d(j,40);//横
 		glVertex2d(j,-40);
-		glVertex2d(40,j);
+		glVertex2d(40,j);//縦
 		glVertex2d(-40,j);
+		glVertex2d(j,40);//斜：右上から左下：左上
+		glVertex2d(-40,-j);
+		glVertex2d(40,j);//斜：右上から左下：右下
+		glVertex2d(-j,-40);
+		glVertex2d(40,j);//斜：左上から右下：右上
+		glVertex2d(j,40);
+		glVertex2d(-40,j);//斜：左上から右下：左下
+		glVertex2d(j,-40);
 		glEnd();
+	}//for_j
+	for(j = -40; j <= 40; j += 8){
 		for(i = -40; i <= 40; i += 8){
 			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-			Point(j, i, 20);
+			Point(j,i,20);
 		}//for_i
 	}//for_j
 	/* player描写 */
-	glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
+	glColor4f(0.2f, 0.6f, 0.3f, 0.2f);
 	Point(px,py,15);//player
 	/* enemy描写 */
 	glColor4f(1.0f, 0.0f, 1.0f, 1.0f);
@@ -119,33 +136,41 @@ void keyboard(unsigned char key ,int x, int y)
 	if ( key == '\x1b') exit(0);
 	if ( key == 'w'){
 		if(py < 40){
+			if(flag == 1) flag_2 = 1;
 			py += 8;
 			flag = 1;
+			if(flag_2 == 1) flag = 2;
 		}//if_py
 	}//if_key
 	if ( key == 's'){
 		if(py > -40){
+			if(flag == 1) flag_2 = 1;
 			py -= 8;
 			flag = 1;
+			if(flag_2 == 1) flag = 2;
 		}//if_py
 	}//if_key
 	if ( key == 'd'){
 		if(px < 40){
+			if(flag == 1) flag_2 = 1;
 			px += 8;
 			flag = 1;
+			if(flag_2 == 1) flag = 2;
 		}//if_px
 	}//if_key
 	if ( key == 'a'){
 		if(px > -40){
+			if(flag == 1) flag_2 = 1;
 			px -= 8;
 			flag = 1;
+			if(flag_2 == 1) flag = 2;
 		}//if_px
 	}//if_key
 }//keyboard
 
 void init(void)
 {
-	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClearColor(1.0, 0.5, 0.5, 1.0);
 }//init
 
 int main(int argc, char *argv[])
