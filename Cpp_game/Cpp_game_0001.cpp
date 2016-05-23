@@ -49,39 +49,15 @@ void enemy_motion(void)
 	if(flag == 2){
 		if(ny > py){
 			ny -= 8;
-			if(ny == 0 && nx == 0){
-				ny += 8;
-				if(nx == px){
-					nx += 8;
-				}
-			}
 		}
 		else if(ny < py){
 			ny += 8;
-			if(ny == 0 && nx == 0){
-				ny -= 8;
-				if(nx == px){
-					nx -= 8;
-				}
-			}
 		}
 		if(nx > px){
 			nx -= 8;
-			if(ny == 0 && nx == 0){
-				nx += 8;
-				if(ny == py){
-					ny += 8;
-				}
-			}
 		}
 		else if(nx < px){
 			nx += 8;
-			if(ny == 0 && nx == 0){
-				nx -= 8;
-				if(ny == py){
-					ny -= 8;
-				}
-			}
 		}
 		if(ny == py && nx == px){
 			cout << "\n\n ......END...... \n\n";
@@ -117,28 +93,10 @@ void display(void)
 		glVertex2d(j,-40);
 		glEnd();
 	}//for_j
-	/* áŠQ•¨ */
-	glColor4f(1.0f, 0.5f, 0.5f, 1.0f);
-	Point(0,0,20);
-	glBegin(GL_POLYGON);
-	glVertex2d(7,7);
-	glVertex2d(7,-7);
-	glVertex2d(-7,-7);
-	glVertex2d(-7,7);
-	glEnd();
-	glColor4f(0.0f,0.0f,0.0f,0.0f);
-	glBegin(GL_LINE_LOOP);
-	glVertex2d(8,0);
-	glVertex2d(0,-8);
-	glVertex2d(-8,0);
-	glVertex2d(0,8);
-	glEnd();
 	for(j = -40; j <= 40; j += 8){
 		for(i = -40; i <= 40; i += 8){
-			if(!(j == 0 && i == 0)){
-				glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-				Point(j,i,20);
-			}
+			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			Point(j,i,20);
 		}//for_i
 	}//for_j
 	/* player•`ŽÊ */
@@ -188,9 +146,6 @@ void keyboard(unsigned char key ,int x, int y)
 		if(py < 40){
 			if(flag == 1) flag_2 = 1;
 			py += 8;
-			if(py == 0 && px == 0){
-				py -= 8;
-			}
 			flag = 1;
 			if(flag_2 == 1) flag = 2;
 		}//if_py
@@ -199,9 +154,6 @@ void keyboard(unsigned char key ,int x, int y)
 		if(py > -40){
 			if(flag == 1) flag_2 = 1;
 			py -= 8;
-			if(py == 0 && px == 0){
-				py += 8;
-			}
 			flag = 1;
 			if(flag_2 == 1) flag = 2;
 		}//if_py
@@ -210,9 +162,6 @@ void keyboard(unsigned char key ,int x, int y)
 		if(px < 40){
 			if(flag == 1) flag_2 = 1;
 			px += 8;
-			if(py == 0 && px == 0){
-				px -= 8;
-			}
 			flag = 1;
 			if(flag_2 == 1) flag = 2;
 		}//if_px
@@ -221,9 +170,6 @@ void keyboard(unsigned char key ,int x, int y)
 		if(px > -40){
 			if(flag == 1) flag_2 = 1;
 			px -= 8;
-			if(py == 0 && px == 0){
-				px += 8;
-			}
 			flag = 1;
 			if(flag_2 == 1) flag = 2;
 		}//if_px
