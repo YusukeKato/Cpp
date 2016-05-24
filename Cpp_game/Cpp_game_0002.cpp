@@ -2,7 +2,7 @@
  * Cpp_game_001.cpp
  * Yusuke_Kato
  * 2016.5.21
- * 2016.5.23
+ * 2016.5.24
  */
  
 /*
@@ -28,6 +28,7 @@
 #include <GL/glut>
 #include <iostream>
 #include <windows>//Sleepを使いたかった
+#include <time>
 using namespace std;
 
 static GLint px = -40,py = -40;//player位置
@@ -49,40 +50,71 @@ void Point(int x,int y,float size){
 /* enemyの動き */
 void enemy_motion(void)
 {
+	int ny_copy, nx_copy;
+	int ran;
+	
 	if(flag == 2){
+		ny_copy = ny;
+		nx_copy = nx;
 		if(ny > py){
 			ny -= 8;
-			if(ny == 0 && nx == 0){
+			if(ny ==  0 && nx == 0){
 				ny += 8;
-				if(nx == px){
-					nx += 8;
-				}
 			}
 		}
 		else if(ny < py){
 			ny += 8;
 			if(ny == 0 && nx == 0){
 				ny -= 8;
-				if(nx == px){
-					nx -= 8;
-				}
 			}
 		}
 		if(nx > px){
 			nx -= 8;
 			if(ny == 0 && nx == 0){
 				nx += 8;
-				if(ny == py){
-					ny += 8;
-				}
 			}
 		}
 		else if(nx < px){
 			nx += 8;
 			if(ny == 0 && nx == 0){
 				nx -= 8;
-				if(ny == py){
+			}
+		}
+		if(ny == ny_copy && nx == nx_copy){
+			srand((unsigned int)time(NULL));
+			ran = rand()%2+1;
+			if(ny > py){
+				if(ran == 1){
+					nx += 8;
 					ny -= 8;
+				} else if(ran == 2){
+					nx -= 8;
+					ny -= 8;
+				}
+			} else if(ny < py){
+				if(ran == 1){
+					nx += 8;
+					ny += 8;
+				} else if(ran == 2){
+					nx -= 8;
+					ny += 8;
+				}
+			}
+			if(nx > px){
+				if(ran == 1){
+					ny += 8;
+					nx -= 8;
+				} else if(ran == 2){
+					ny -= 8;
+					nx -= 8;
+				}
+			} else if(nx < px){
+				if(ran == 1){
+					ny += 8;
+					nx += 8;
+				} else if(ran == 2){
+					ny -= 8;
+					nx += 8;
 				}
 			}
 		}
@@ -90,7 +122,7 @@ void enemy_motion(void)
 			cout << "\n\n ......END...... \n\n";
 			exit(0);
 		}
-		Sleep(1000);//なくてもいい
+		//Sleep(1000);//なくてもいい
 		flag = 0;//ターンの切り替えのため
 		flag_2 = 0;
 	}//if_flag
